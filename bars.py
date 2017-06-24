@@ -1,6 +1,5 @@
 import json
 import argparse
-import math
 from collections import defaultdict
 from geopy.distance import great_circle
 
@@ -12,7 +11,7 @@ def load_data(filepath):
         bar_data = json.load(total_bar_list)
     return bar_data
 
-def get_biggest_bar(bar_data):
+def evaluate_smallest_bar(bar_data):
     bar_size_dict = defaultdict(list)
     for item in bar_data:
         bar_size_dict[item['SeatsCount']].append(item['Name'])
@@ -20,20 +19,36 @@ def get_biggest_bar(bar_data):
     min_seats_quantity = 5
     seat_list = [seats for seats in seat_list_initial if seats >= min_seats_quantity]
     min_seat_bar = min(seat_list)
-    print('\nБар(ы) с наименьшим количесвом мест - ', min_seat_bar)
-    print('\n'.join(bar for bar in  bar_size_dict[min_seat_bar]))
+    min_seat_bar_list = []
+    min_seat_bar_list.append(str(min_seat_bar))
+    min_seat_bar_list += bar_size_dict[min_seat_bar]
+    return min_seat_bar_list
+    
+def get_smallest_bar(min_seat_bar_list):
+    min_seat = min_seat_bar_list[0]
+    min_seat_list_bar = min_seat_bar_list[1:]
+    print('\nБар(ы) с наименьшим количесвом мест - ', min_seat)
+    print('\n'.join(bar for bar in min_seat_list_bar))
 
-def get_smallest_bar(bar_data):
+def evaluate_biggest_bar(bar_data):
     bar_size_dict = defaultdict(list)
     for item in bar_data:
         bar_size_dict[item['SeatsCount']].append(item['Name'])
     seat_list = list(bar_size_dict.keys())
     max_seat_bar = max(seat_list)
-    print('\nБар(ы) с наибольшим количесвом мест - ', max_seat_bar)
-    print('\n'.join(bar for bar in  bar_size_dict[max_seat_bar]))
+    max_seat_bar_list = []
+    max_seat_bar_list.append(str(max_seat_bar))
+    max_seat_bar_list += bar_size_dict[max_seat_bar]
+    return max_seat_bar_list
+
+def get_biggest_bar(min_seat_bar_list):
+    max_seat = max_seat_bar_list[0]
+    max_seat_list_bar = max_seat_bar_list[1:]
+    print('\nБар(ы) с наибольшим количесвом мест - ', max_seat)
+    print('\n'.join(bar for bar in max_seat_list_bar))
 
 
-def get_closest_bar(bar_data, search_radius, longitude, latitude):
+def evaluate_closest_bar(bar_data, search_radius, longitude, latitude):
     bar_dist_nearest_dict = defaultdict(list)
     bar_coordinates_list=((item['geoData']['coordinates'],item['Name']) for item in bar_data)
     current_coord = (longitude, latitude)
@@ -42,8 +57,10 @@ def get_closest_bar(bar_data, search_radius, longitude, latitude):
         distance = round(great_circle(current_coord, bar_coord).km,1)
         if distance <= search_radius:
             bar_dist_nearest_dict[str(distance) + ' км'].append(bar[1])
+    return bar_dist_nearest_dict
+    
+def get_closest_bar(bar_dist_nearest_dict):
     if len(bar_dist_nearest_dict):
-        print('\nБлижайший(е) бар(ы) в радиусе ', search_radius, ' км')
         for distance in sorted(bar_dist_nearest_dict.keys()):
             print('\n{}'.format(distance))
             print('\n'.join(bar for bar in  bar_dist_nearest_dict[distance]))
@@ -53,10 +70,12 @@ def get_closest_bar(bar_data, search_radius, longitude, latitude):
 if __name__ == '__main__':
     arg = parser.parse_args()
     bar_data = load_data(arg.path)
-    get_biggest_bar(bar_data)
-    get_smallest_bar(bar_data)
+    min_seat_bar_list = evaluate_smallest_bar(bar_data)
+    get_smallest_bar(min_seat_bar_list)
+    max_seat_bar_list = evaluate_biggest_bar(bar_data)
+    get_biggest_bar(max_seat_bar_list)
     search_radius = float(input('\nИщем ближайший бар\nВведите радиус поиска в км (например 1.5): '))
     longitude = float(input('Введите долготу: '))
     latitude  = float(input('Введите широту: '))
-    get_closest_bar(bar_data, search_radius, longitude, latitude)
-    
+    bar_dist_nearest_dict = evaluate_closest_bar(bar_data, search_radius, longitude, latitude)
+    get_closest_bar(bar_dist_nearest_dict)
