@@ -16,13 +16,28 @@ bar_size_dict = defaultdict(list)
 for item in bar_data:
     if item['SeatsCount'] >= min_seats_quantity:
         bar_size_dict[item['SeatsCount']].append(item['Name'])
-bar = OrderedDict(sorted(bar_size_dict.items()))
 
-min_seat = list(bar.values())[0]
-max_seat = list(bar.values())[-1]
+# print(bar_size_dict)
 
-print(min_seat, '\n')
-print(max_seat)
+min_seat_tuple = min(bar_size_dict.items())
+min_seat       = min_seat_tuple[1]
+
+max_seat_tuple = max(bar_size_dict.items())
+max_seat       = max_seat_tuple[1]
+
+bar_size_name  = ['Бар(ы) с наименьшим количесвом мест', 'Бар(ы) с наибольшим количесвом мест']
+bar_size       = [min_seat, max_seat]
+bars           = dict(zip(bar_size_name, bar_size))
+
+for item in bars:
+    print('\n{}:'.format(item))
+    print('\n'.join(bar for bar in bars[item]))
+# min_seat = list(bar.values())[0]
+# max_seat = list(bar.values())[-1]
+
+
+# print(min_seat, '\n')
+# print(max_seat)
 
 # highest = max(bar_size_dict.values())
 # print(highest)
