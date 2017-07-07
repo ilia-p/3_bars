@@ -55,4 +55,4 @@ if __name__ == '__main__':
     longitude = float(input('\nВведите долготу: '))
     latitude  = float(input('Введите широту: '))
     bar_min_dist = get_closest_bars(bar_data, longitude, latitude)
-    print_closest_bars(bar_min_dist)ss
+    print_closest_bars(bar_min_dist)
