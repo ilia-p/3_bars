@@ -36,7 +36,6 @@ def print_target_bars(min_seat_bar, max_seat_bar, bar_min_dist):
     print('\n{}:\n{}'.format('Бар с наибольшим количесвом мест', max_seat_bar)) 
     print('\n{}:\n{}'.format('Ближайший бар',bar_min_dist))
    
-
 if __name__ == '__main__':
     
     arg = parser.parse_args()
