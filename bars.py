@@ -5,22 +5,16 @@ import re
 from math import sqrt
 
 parser = argparse.ArgumentParser(description = 'Path_to_file')
-parser.add_argument('-p', '--path', type = str, required = True, help = 'Path to file with bar data in json')
+parser.add_argument('-p', '--path', type = str, required = True, help = 'Путь до файла с данными в формате json')
 
 def check_path(arg):
     file_path = ''
-    while True:
-        if os.path.exists(arg.path):
-            filepath = arg.path
-            return filepath
-            break
-        elif os.path.exists(file_path):
-            filepath = file_path
-            return filepath
-            break
-        else:
-            file_path = input('Такого пути/файла не существует, повторите ввод:\n')
-            continue
+    if os.path.exists(arg.path):
+        filepath = arg.path
+        return filepath
+    else:
+        file_path = input('Такого пути/файла не существует, повторите запуск')
+        exit()
 
 def load_data(filepath):
     with open(filepath) as total_bar_list:
@@ -38,22 +32,24 @@ def get_biggest_bars(bar_data):
     return max_seat_bar
 
 def check_coordinate(coordinate):
-    while True:
-        if re.compile(r'\d{2}\.\d*').search(coordinate):
-            coordinate = float(coordinate)
-            return coordinate
-            break
-        else:
-            coordinate = input('Введено некорректное значение, повторите ввод:\n')
-            continue
+    if re.compile(r'\d{2}\.\d*').search(coordinate):
+        coordinate = float(coordinate)
+        return coordinate
+    else:
+        coordinate = input('Введено некорректное значение, повторите запуск')
+        exit()
 
 def get_closest_bars(bar_data, longitude, latitude):
-    bar_dist_dict = {}
     current_coord = (longitude, latitude)
-    bar_dist_dict = {item['Name']:round(sqrt((item['geoData']['coordinates'][0]-current_coord[0])**2 + 
-                    (item['geoData']['coordinates'][1]-current_coord[1])**2),10) for item in bar_data}
-    bar_min_dist_tuple = min(bar_dist_dict.items(), key=lambda x:x[1])
-    bar_min_dist = bar_min_dist_tuple[0]
+    bar_min_dist = bar_data[0]['Name']
+    dist_min = round(sqrt((bar_data[0]['geoData']['coordinates'][0]-current_coord[0])**2 + 
+                    (bar_data[0]['geoData']['coordinates'][1]-current_coord[1])**2),10)
+    for item in bar_data:
+        dist = round(sqrt((item['geoData']['coordinates'][0]-current_coord[0])**2 + 
+                    (item['geoData']['coordinates'][1]-current_coord[1])**2),10)
+        if dist < dist_min:
+            dist_min = dist
+            bar_min_dist = item['Name']
     return bar_min_dist
     
 def print_target_bars(min_seat_bar, max_seat_bar, bar_min_dist):
