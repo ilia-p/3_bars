@@ -13,7 +13,7 @@ def check_path(arg):
         filepath = arg.path
         return filepath
     else:
-        file_path = input('Такого пути/файла не существует, повторите запуск')
+        print('Такого пути/файла не существует, повторите запуск')
         exit()
 
 def load_data(filepath):
@@ -36,20 +36,14 @@ def check_coordinate(coordinate):
         coordinate = float(coordinate)
         return coordinate
     else:
-        coordinate = input('Введено некорректное значение, повторите запуск')
+        print('Введено некорректное значение, повторите запуск')
         exit()
 
 def get_closest_bars(bar_data, longitude, latitude):
     current_coord = (longitude, latitude)
-    bar_min_dist = bar_data[0]['Name']
-    dist_min = round(sqrt((bar_data[0]['geoData']['coordinates'][0]-current_coord[0])**2 + 
-                    (bar_data[0]['geoData']['coordinates'][1]-current_coord[1])**2),10)
-    for item in bar_data:
-        dist = round(sqrt((item['geoData']['coordinates'][0]-current_coord[0])**2 + 
-                    (item['geoData']['coordinates'][1]-current_coord[1])**2),10)
-        if dist < dist_min:
-            dist_min = dist
-            bar_min_dist = item['Name']
+    bar_min_dist_data = min(bar_data, key=lambda x:round(sqrt((x['geoData']['coordinates'][0]-current_coord[0])**2 + 
+                           (x['geoData']['coordinates'][1]-current_coord[1])**2),10))
+    bar_min_dist = bar_min_dist_data['Name']
     return bar_min_dist
     
 def print_target_bars(min_seat_bar, max_seat_bar, bar_min_dist):
@@ -58,7 +52,6 @@ def print_target_bars(min_seat_bar, max_seat_bar, bar_min_dist):
     print('\n{}:\n{}'.format('Ближайший бар',bar_min_dist))
    
 if __name__ == '__main__':
-    
     arg = parser.parse_args()
     filepath = check_path(arg)
     bar_data = load_data(filepath)
