@@ -1,3 +1,4 @@
+import sys
 import json
 import argparse
 import os.path
@@ -12,9 +13,7 @@ def check_path(arg):
     if os.path.exists(arg.path):
         filepath = arg.path
         return filepath
-    else:
-        print('Такого пути/файла не существует, повторите запуск')
-        exit()
+    sys.exit('Такого пути/файла не существует, повторите запуск')
 
 def load_data(filepath):
     with open(filepath) as total_bar_list:
@@ -35,9 +34,8 @@ def check_coordinate(coordinate):
     if re.compile(r'\d{2}\.\d*').search(coordinate):
         coordinate = float(coordinate)
         return coordinate
-    else:
-        print('Введено некорректное значение, повторите запуск')
-        exit()
+    sys.exit('Введено некорректное значение, повторите запуск')
+        
 
 def get_closest_bars(bar_data, longitude, latitude):
     current_coord = (longitude, latitude)
