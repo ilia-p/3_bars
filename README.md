@@ -28,4 +28,5 @@ HAGGISS
 # Цели проекта
 
 Код создан в учебных целях. В рамках учебного курса по веб-разработке - [DEVMAN.org](https://devman.org)
-test row
+test  row
+test  row 2
